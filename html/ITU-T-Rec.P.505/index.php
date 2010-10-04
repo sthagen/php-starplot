@@ -16,6 +16,7 @@
     $page .= '<h3>'.$h2.'</h3>'."\n";
     $data = implode(',',array(1.0,0.2,0.7,0.5,0.85,0.82,0.98,'NULL',0.97,0.1));
     $data = implode(',',array( 5,      3.2,       2.5,    -1,     46,     '2b',   'not ok',      -10,       -10,             0));
+    $data = implode(',',array(1.0,0.2,0.7,0.5,0.85,0.82,0.98,'NULL',0.97,0.1));
     $h1 = 'Note: Only surrogate data and axes for now'; //urlencode('My Testdata');
     $targetURL = '/rcall/html/ITU-T-Rec.P.505.php';
     $targetMethod = 'get';
