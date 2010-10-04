@@ -10,8 +10,8 @@
     $page .= '<title>'.$title.'</title>'."\n";
     $pageCSS = '<link rel="stylesheet" type="text/css" media="screen" href="/css/starplotde_v1_screen.css" />'."\n";
     $page .= $pageCSS;
-    $page .= '</head>';
-    $page .= '<body>';
+    $page .= '</head>'."\n";
+    $page .= '<body>'."\n";
     $page .= '<h1>'.$h1.'</h1>'."\n";
     $page .= '<h3>'.$h2.'</h3>'."\n";
     $data = implode(',',array(1.0,0.2,0.7,0.5,0.85,0.82,0.98,'NULL',0.97,0.1));
@@ -40,11 +40,12 @@
     $pageForm .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     $pageForm .= '&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="Testlauf" value="Generate StarPlot" />&nbsp;&nbsp;&nbsp;&nbsp;';
   
-    $pageForm .= '</form></fieldset></div>';
+    $pageForm .= '</form></fieldset></div>'."\n";
     $page .= $pageForm;
-    $page .= '<div style="clear:both;float:left;margin-left:2px;"><em>Note: The generated plot will open in a separate browser window.</em></div>';
+    $page .= '<div style="clear:both;float:left;margin-left:2px;"><em>Note: The generated plot will open in a separate browser window.</em></div>'."\n";
     $startURL = 'Intro'; //$_SERVER["SERVER_NAME"];
-    $page .= '<div style="clear:both;float:right;margin-right:10%;">Back to <a href="/">'.$startURL.'</a></div>';
-    $page .= '</body></html>';
+    $page .= '<div style="clear:both;float:right;margin-right:10%;">Back to <a href="/">'.$startURL.'</a></div>'."\n";
+    $page .= '<div style="float:right;"><em>Version: 0.9.1</em></div>'."\n";
+    $page .= '</body></html>'."\n";
     echo $page;
 ?>
