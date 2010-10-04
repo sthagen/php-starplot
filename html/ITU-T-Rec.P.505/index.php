@@ -17,11 +17,12 @@
     $data = implode(',',array(1.0,0.2,0.7,0.5,0.85,0.82,0.98,'NULL',0.97,0.1));
     $data = implode(',',array( 5,      3.2,       2.5,    -1,     46,     '2b',   'not ok',      -10,       -10,             0));
     $h1 = 'Note: Only surrogate data and axes for now'; //urlencode('My Testdata');
-    $targetURL = '/ITU-T-Rec.P.505.php';
+    $targetURL = '/rcall/html/ITU-T-Rec.P.505.php';
+    $targetMethod = 'get';
     $pageForm = '<div style="font-size:x-small;margin-top:0px;margin-right:2px;float:left;clear:both;">';
     $pageForm .= '<fieldset style="width:600px;">';
     $pageForm .= '<legend><span style="margin-bottom:0px;font-size:large;color:red;font-family:sans-serif;">Configure Plot</span></legend>';
-    $pageForm .= '<form name="TestData" action="'.$targetURL.'" target="_plot" method="post">';
+    $pageForm .= '<form name="TestData" action="'.$targetURL.'" target="_plot" method="'.$targetMethod.'">';
     $textAreaCols = 46;
     $h1Width = 40;
     $pageForm .= '<span style="font-size:medium;vertical-align:top;">Title: </span>';
@@ -44,8 +45,7 @@
     $page .= $pageForm;
     $page .= '<div style="clear:both;float:left;margin-left:2px;"><em>Note: The generated plot will open in a separate browser window.</em></div>'."\n";
     $startURL = 'Intro'; //$_SERVER["SERVER_NAME"];
-    $page .= '<div style="clear:both;float:right;margin-right:10%;">Back to <a href="/">'.$startURL.'</a></div>'."\n";
-    $page .= '<div style="float:right;"><em>Version: 0.9.1</em></div>'."\n";
+    $page .= '<div style="clear:both;float:right;margin-right:10%;">Back to <a href="/">'.$startURL.'</a> | <em style="font-size:xx-small;">Version: 0.9.1</em></div>'."\n";
     $page .= '</body></html>'."\n";
     echo $page;
 ?>
