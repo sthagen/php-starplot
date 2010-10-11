@@ -45,6 +45,8 @@ if($valuesReq) {
     $values = $valuesReq;
 }
 $axisValue = $values;
+// with this prototyping setup 9:'D value' is at 12:00, 0:'SLR' at 01:30, ...
+// from imagefilledarc: 0 degrees is located at the three-oclock position, and the arc is drawn clockwise.
 $axisIndex = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 $axisNames = array('SLR','MOS SND','MOS RCV','RLR','TCLw','DT type','Live Call','BGNT (far)','BGNT (near)','D value');
 $axisType = array('FOLDED','LINEAR','LINEAR','FOLDED','LINEAR','MAPPED','EXTREME','LINEAR','LINEAR','LINEAR');
