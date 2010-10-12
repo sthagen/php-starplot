@@ -271,7 +271,7 @@ function test_main_StarPlot_CircleGeometry() {
     }
     echo '<span style="float:right;">Format JPG: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="PlainStarPlot" title="Plot in Format=JPG">JPEG.'.$jobKey.'</a></span>'."\n";
     echo '<br /><span style="float:right;">Format PNG: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="PlainStarPlot" title="Plot in FOrmat=JPG">PNG.'.$jobKey.'</a></span>'."\n";
-    echo '<br /><img src="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.date().'" style="float:right;" title="Format=PNG" />'."\n";
+    echo '<br /><img src="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.date().'" style="float:right;" alt="Format=PNG" />'."\n";
     echo '<pre>';
     echo 'Testing Module: '.$_SERVER['PHP_SELF']."\n";
     echo '  TestInput: NAXIS='.$neededNumberOfAxis."\n";
