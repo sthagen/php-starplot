@@ -26,7 +26,9 @@ function StarPlot_minFoldedFromLimitMax($limit, $max) {
 }
 function test_main_StarPlot_AxisMaps() {
     session_start();
-    $neededNumberOfAxisMax = 1; // single axis test mode
+    $neededNumberOfAxisMax = 16; 
+    $nullStrRepr = 'NULL';
+    $infoQueue = array();
     $title = 'Testing Module: '.$_SERVER['PHP_SELF'];
     $page = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
     $page .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">'."\n";
@@ -48,46 +50,139 @@ function test_main_StarPlot_AxisMaps() {
                             'AXIS_MAX' => 1.00,
                             'AXIS_LIMIT_FOLDED' => False,
                             'AXIS_MIN_FOLDED' => False,
-                            'AXIS_VALUE' => 'NULL',
+                            'AXIS_VALUE' => $nullStrRepr,
                             'AXIS_UNIT' => '1'
+                            );
+    $axisDefaultMapFolded = array(
+                            'AXIS_INDEX' => False,
+                            'AXIS_NAME' => 'DimensionFolded',
+                            'AXIS_TYPE' => 'FOLDED',
+                            'AXIS_MIN' => 0.00,
+                            'AXIS_LIMIT' => 0.80,
+                            'AXIS_MAX' => 1.00,
+                            'AXIS_LIMIT_FOLDED' => False,
+                            'AXIS_MIN_FOLDED' => False,
+                            'AXIS_VALUE' => $nullStrRepr,
+                            'AXIS_UNIT' => 'dB'
                             );
     $axisDefaultKeys = array_keys($axisDefaultMap);
     $axisDefaultValues = array_values($axisDefaultMap);
-    $axisValues = $axisDefaultValues;
-    if(isset($_GET['AXIS_SPEC'])) {
-        $axisValuesCand = explode(';',htmlentities($_GET['AXIS_SPEC']));
-        if (count($axisValues) == count($axisValuesCand)) {
-            foreach($axisValuesCand as $i => $v) {
-                if ($v != '') {
-                    $axisValues[$i] = $v;
+    $axisValuesRows = array();
+    $someAxisMaps = array();
+    $axisValuesRowsReqString = '';
+    $hasIndexCollision = False;
+    $hasIndexOrderMismatch = False;
+    if(!isset($_POST['AXIS_SPEC_ROWS'])) {
+        $someAxisMaps[0] = $axisDefaultMap;
+        $someAxisMaps[0]['AXIS_INDEX'] = 0;
+        $someAxisMaps[1] = $axisDefaultMap;
+        $someAxisMaps[1]['AXIS_INDEX'] = 1;
+        $someAxisMaps[1]['AXIS_NAME'] = 'Dimension2';
+        $someAxisMaps[2] = $axisDefaultMapFolded;
+        $someAxisMaps[2]['AXIS_INDEX'] = 2;
+        //DEBUG echo '<pre>DefaultUsed:'."\n".print_r($someAxisMaps,True).'</pre>';
+        $infoQueue[] = 'Default used, since no input given.';
+    }
+    else {
+        $axisValuesRowsReqString = htmlentities($_POST['AXIS_SPEC_ROWS']);
+        $axisValuesRowsReq = explode("\n",$axisValuesRowsReqString);
+        $nAxisRowsReq = count($axisValuesRowsReq);
+        foreach(array_slice($axisValuesRowsReq,0,$neededNumberOfAxisMax) as $n => $rowString) {
+            $axisValues = $axisDefaultValues;
+            $axisValuesCand = explode(';',$rowString);
+            if (count($axisValues) == count($axisValuesCand)) {
+                foreach($axisValuesCand as $i => $v) {
+                    if ($v != '') {
+                        $axisValues[$i] = $v;
+                    }
                 }
+            }
+            $axisMap = array_combine($axisDefaultKeys,$axisValues);
+            $numericAxisTypes = array('LINEAR','FOLDED');
+            if(!$axisMap['AXIS_INDEX']) {
+                $axisMap['AXIS_INDEX'] = $n;
+            }
+            if (in_array($axisMap['AXIS_TYPE'], $numericAxisTypes)) {
+                $axisMap['AXIS_MIN'] = StarPlot_minFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
+                if($axisMap['AXIS_VALUE'] != $nullStrRepr and !is_numeric($axisMap['AXIS_VALUE'])) {
+                    $axisMap['AXIS_VALUE'] = $nullStrRepr;
+                }
+            }
+            if ($axisMap['AXIS_TYPE'] == 'FOLDED') {
+                $axisMap['AXIS_LIMIT_FOLDED'] = StarPlot_limitFoldedFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
+                $axisMap['AXIS_MIN_FOLDED'] = StarPlot_minFoldedFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
+            }
+            $axisValues = array_values($axisMap);
+            $someAxisMaps[] = $axisMap;
+        }
+        $nAxisRows = count($someAxisMaps);
+        if($nAxisRowsReq > $nAxisRows) {
+            $infoQueue[] = $nAxisRowsReq.' dimensions requested, but only '.$nAxisRows.' accepted. Maximum is '.$neededNumberOfAxisMax;
+        }
+        $bestEffortReOrderMap = array();
+        foreach($someAxisMaps as $x => $data) {
+            $indexCand = intval($data['AXIS_INDEX']);
+            if(!is_int($indexCand) or $indexCand < 0 or $indexCand >= $nAxisRows) {
+                $hasIndexCollision = True;
+                $conflictReason = 'NO_INTEGER';
+                if ($indexCand < 0) {
+                    $conflictReason = 'LT_ZERO';
+                }
+                elseif ($indexCand >= $nAxisRows) {
+                    $conflictReason = 'GT_NROW';
+                }
+                $infoQueue[] = 'Conflicting index positions. Failing IndexCand is '.$indexCand.', reason is '.$conflictReason;
+            }
+            if($indexCand != $x) {
+                $hasIndexOrderMismatch = True;
+                $infoQueue[] = 'Index positions not ordered. Misplaced IndexCand is '.$indexCand.', found at '.$x;
+            }
+            $bestEffortReOrderMap[$indexCand] = $data;
+        }
+        if(!$hasIndexCollision and $hasIndexOrderMismatch) {
+            ksort($bestEffortReOrderMap);
+            $someAxisMaps = array();
+            foreach($bestEffortReOrderMap as $k => $data) {
+                $someAxisMaps[] = $data;
             }
         }
     }
-    $axisMap = array_combine($axisDefaultKeys,$axisValues);
-    $numericAxisTypes = array('LINEAR','FOLDED');
-    $axisMap['AXIS_INDEX'] = 0;
-    if (in_array($axisMap['AXIS_TYPE'], $numericAxisTypes)) {
-        $axisMap['AXIS_MIN'] = StarPlot_minFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
+    $normalizedInputDataRows = array();
+    foreach($someAxisMaps as $x => $data) {
+        $axisValues = array_values($data);
+        $normalizedInputDataRows[] = implode(";",$axisValues);
     }
-    if ($axisMap['AXIS_TYPE'] == 'FOLDED') {
-        $axisMap['AXIS_LIMIT_FOLDED'] = StarPlot_limitFoldedFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
-        $axisMap['AXIS_MIN_FOLDED'] = StarPlot_minFoldedFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
-    }
-    $axisValues = array_values($axisMap);
+    //DEBUG echo '<pre>ReAssembledRows:'."\n".print_r($normalizedInputDataRows,True).'</pre>';
+    $normalizedInputDataString = implode("\n",$normalizedInputDataRows);
+    //DEBUG echo '<pre>ReAssembledNormalizedInput:'."\n".print_r($normalizedInputDataString,True).'</pre>';
     echo 'AxisSpecTest: '."\n";
-    echo '<form style="display:inline;" method="get" action="'.$_SERVER['PHP_SELF'].'">'."\n";
-    echo '<input type="text" style="font-sice:small;" size="80" name="AXIS_SPEC" value="'.implode(';',$axisValues).'" />'."\n";
+    echo '<form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
+    echo '<textarea style="font-sice:small;" cols="80" rows="16" name="AXIS_SPEC_ROWS">'.$normalizedInputDataString.'</textarea>'."\n";
     echo '<input type="submit" name="Subme" value="parse" />'."\n";
     echo '</form>'.'<br />'."\n";
-    echo 'Default is: '.implode(';',$axisDefaultValues).' [<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>]<br />'."\n";
-    echo 'Implicit Keys: '.implode(';',$axisDefaultKeys).'<br />'."\n";
+    echo '[<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>] to some default to get started.<br />'."\n";
+    //echo 'Implicit Keys: '.implode(';',$axisDefaultKeys).'<br />'."\n";
     echo '<pre>';
     echo 'Testing Module: '.$_SERVER['PHP_SELF']."\n";
-    echo '  TestInput: AXIS_SPEC='.htmlentities($_GET['AXIS_SPEC'])."\n";
+    $infoQueue[] = 'TestInput: AXIS_SPEC_ROWS=<pre>'."\n".$axisValuesRowsReqString.'</pre>'."\n";
     echo '  TestOutput[0]:'."\n";
-    echo '$segmentAngleMap='."\n";
+    echo '$someAxisMaps='."\n";
+    //DEBUG echo print_r($someAxisMaps,True);
     echo '</pre>';
+    echo '<table style="width:75%;"><tr><th>Laufd.Nr.</th><th>Name</th><th>Type</th><th>Min</th><th>Limit</th><th>Max</th><th>LimitFolded</th><th>MinFolded</th><th>Value</th><th>Unit</th></tr>'."\n";
+    foreach($someAxisMaps as $i => $data) {
+        $displayRow = array_values($data);
+        echo '<tr><td>';
+        echo implode('</td><td>',$displayRow);
+        echo '</td></tr>';
+    }
+    echo '</table>'."\n";
+    if($infoQueue) {
+        echo '<h2>Info:</h2>';
+        echo '<ul><li>';
+        echo implode('</li><li>',$infoQueue);
+        echo '</li><ul>';
+    }
     echo '</body>'."\n";
     echo '</html>'."\n";
     return True;
