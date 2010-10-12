@@ -181,7 +181,7 @@ function test_main_StarPlot_AxisMaps() {
         echo '<h2>Info:</h2>';
         echo '<ul><li>';
         echo implode('</li><li>',$infoQueue);
-        echo '</li><ul>';
+        echo '</li></ul>';
     }
     echo '</body>'."\n";
     echo '</html>'."\n";
