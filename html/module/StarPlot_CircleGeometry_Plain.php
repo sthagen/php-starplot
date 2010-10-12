@@ -5,11 +5,19 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/module/StarPlot_DMZ.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/module/StarPlot_ImageColors.php');
 function test_main_StarPlot_CircleGeometry_Plain() {
     session_start();
+    $knownFormats = array('PNG','JPG');
     $jobKey = False; // 8cdbd7800d060827f77d4dd2c245c6fd
     if(isset($_GET['JOB_KEY'])) {
         $jobKeyCand = htmlentities($_GET['JOB_KEY']);
         if ( strlen($jobKeyCand) == 32 and isset($_SESSION[$jobKeyCand])) {
             $jobKey = $jobKeyCand;
+        }
+    }
+    $bitmapFormat = 'PNG';
+    if(isset($_GET['FORMAT'])) {
+        $bitmapFormatCand = strtoupper(htmlentities($_GET['FORMAT']));
+        if ( strlen($bitmapFormatCand) == 3 and in_array($bitmapFormatCand,$knownFormats)) {
+            $bitmapFormat = $bitmapFormatCand;
         }
     }
 
@@ -50,13 +58,16 @@ function test_main_StarPlot_CircleGeometry_Plain() {
     StarPlot_canvasCircleAreaLowsTargetUpper($image,$centerX,$centerY,$height*0.0,$height*$equiPartFactor,$height,$black,$red,$white);
     StarPlot_SetImgColorStyled($image, $darkgray, 5, $gray, 5);
     $segmentAngleMapICW = $_SESSION[$jobKey]['SEG_ANG_MAP_ICW'];
+    $nSectors = count($segmentAngleMapICW);
     foreach($segmentAngleMapICW as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
         $w = $radiusInner;
         $h = $radiusInner;
         $c = $gray;
         imagefilledarc($image, $centerX, $centerY, $w, $h, $angleStart, $angleStop, $c, IMG_ARC_PIE);
-        imagefilledarc($image, $centerX, $centerY, $w, $h, $angleStart, $angleStop, $black, IMG_ARC_NOFILL|IMG_ARC_EDGED);
+        if($nSectors >1) {
+            imagefilledarc($image, $centerX, $centerY, $w, $h, $angleStart, $angleStop, $black, IMG_ARC_NOFILL|IMG_ARC_EDGED);
+        }
     }
 
     imagesetthickness($image, 1);
@@ -102,8 +113,14 @@ function test_main_StarPlot_CircleGeometry_Plain() {
     }
     
     $imageOut = StarPlot_antiAlias($image);
-    header('Content-type: image/png');
-    imagepng($imageOut);
+    if ($bitmapFormat == 'JPG') {
+        header('Content-type: image/jpeg');
+        imagejpeg($imageOut, NULL, 95);
+    }
+    else {
+        header('Content-type: image/png');
+        imagepng($imageOut);
+    }
     imagedestroy($imageOut);
     return True;
 }

@@ -142,7 +142,7 @@ function StarPlot_SegmentAngleMap($neededNumberOfAxis) {
     // but we want one $angleMid allways point to 12 oclock, the rest
     // ... determined by $neededNumberOfAxis
     // and remember, we want the axis to point at 12 oclock, not start-stop
-    // so n = 1 gives (0,360,360)
+    // so n = 1 gives (0,360,360) in theory 180 full circle to 180
     // n = 2 gives [(270,90,360), (90,270,180)]
     // n = 3 gives [(300,60,360), (60,180,120), (180,300,240)]
     $segmentAngleMap = array();
@@ -156,14 +156,14 @@ function StarPlot_SegmentAngleMap($neededNumberOfAxis) {
     $anglePerSect = $norm/$neededNumberOfAxis;
     $signedCorrectAxisShift = -$anglePerSect/2;
     foreach(range(0,$neededNumberOfAxis-1) as $i) {
-        $angleStart = ($i*$anglePerSect + $signedCorrectAxisShift + $norm) % $norm;
-        $angleStop = ($angleStart + $anglePerSect + $norm) % $norm;
-        $angleMid = ($angleStop + $angleStart ) / 2;
+        $angleStart = fmod(($i*$anglePerSect + $signedCorrectAxisShift + $norm), $norm);
+        $angleStop = fmod(($angleStart + $anglePerSect + $norm), $norm);
+        $angleMid = ($angleStop + $angleStart ) / 2.0;
         if($angleStop < $angleStart and $angleStop == $closureGuard) {
             $angleStop = $norm;
         }
         if($angleStop < $angleStart) {
-            $angleMid = ($angleStop + $norm + $angleStart ) / 2;
+            $angleMid = ($angleStop + $norm + $angleStart ) / 2.0;
         }
         $segmentAngleMap[$i] = array($angleStart, $angleStop, $angleMid);
     }
@@ -181,7 +181,7 @@ function StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMapNCW) {
     $closureGuard = 0;
     $norm = 360;
     $signedShiftDegrees = -90;
-    $myEps = 0.0000001;
+    $myEps = 0.0; //0.0000000000001; // one zero more and 12+03 oclock for n=1
     if(count(array_keys($segmentAngleMapNCW)) == 1) {
         $segmentAngleMapICW[0] = array(270+$myEps,270-$myEps,270);        
         return $segmentAngleMapICW;
@@ -189,14 +189,14 @@ function StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMapNCW) {
     }
     foreach($segmentAngleMapNCW as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
-        $angleStart = ($angleStart + $signedShiftDegrees + $norm) % $norm;
-        $angleStop = ($angleStop + $signedShiftDegrees + $norm) % $norm;
+        $angleStart = fmod(($angleStart + $signedShiftDegrees + $norm), $norm);
+        $angleStop = fmod(($angleStop + $signedShiftDegrees + $norm), $norm);
         if($angleStop < $angleStart and $angleStop == $closureGuard) {
             $angleStop = $norm;
         }
-        $angleMid = ($angleStop + $angleStart ) / 2;
+        $angleMid = ($angleStop + $angleStart ) / 2.0;
         if($angleStop < $angleStart) {
-            $angleMid = ($angleStop + $norm + $angleStart ) / 2;
+            $angleMid = ($angleStop + $norm + $angleStart ) / 2.0;
         }
         $segmentAngleMapICW[$i] = array($angleStart, $angleStop, $angleMid);
     }
@@ -222,14 +222,14 @@ function StarPlot_TransformAngleMap_ICW_NCW($segmentAngleMapICW) {
     }
     foreach($segmentAngleMapICW as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
-        $angleStart = ($angleStart + $signedShiftDegrees + $norm) % $norm;
-        $angleStop = ($angleStop + $signedShiftDegrees + $norm) % $norm;
+        $angleStart = fmod(($angleStart + $signedShiftDegrees + $norm), $norm);
+        $angleStop = fmod(($angleStop + $signedShiftDegrees + $norm), $norm);
         if($angleStop < $angleStart and $angleStop == $closureGuard) {
             $angleStop = $norm;
         }
-        $angleMid = ($angleStop + $angleStart ) / 2;
+        $angleMid = ($angleStop + $angleStart ) / 2.0;
         if($angleStop < $angleStart) {
-            $angleMid = ($angleStop + $norm + $angleStart ) / 2;
+            $angleMid = ($angleStop + $norm + $angleStart ) / 2.0;
         }
         $segmentAngleMapNCW[$i] = array($angleStart, $angleStop, $angleMid);
     }
@@ -237,21 +237,48 @@ function StarPlot_TransformAngleMap_ICW_NCW($segmentAngleMapICW) {
 }
 function test_main_StarPlot_CircleGeometry() {
     session_start();
-    $neededNumberOfAxis = 12;
+    $neededNumberOfAxisMax = 16;
+    $title = 'Testing Module: '.$_SERVER['PHP_SELF'];
+    $page = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
+    $page .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">'."\n";
+    $page .= '<head>'."\n";
+    $page .= '<link rel="shortcut icon" href="/starplot-favicon.ico" />'."\n";
+    $page .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'."\n";
+    $page .= '<title>'.$title.'</title>'."\n";
+    $pageCSS = '<link rel="stylesheet" type="text/css" media="screen" href="/css/starplotde_v1_screen.css" />'."\n";
+    $page .= $pageCSS;
+    $page .= '</head>';
+    $page .= '<body>';
+    echo $page;
+    $neededNumberOfAxis = $neededNumberOfAxisMax;
     if(isset($_GET['NAXIS'])) {
         $nAxisCand = intval(htmlentities($_GET['NAXIS']));
-        if ( 0 < $nAxisCand and $nAxisCand < 13 ) {
+        if ( 0 < $nAxisCand and $nAxisCand <= $neededNumberOfAxis ) {
             $neededNumberOfAxis = $nAxisCand;
         }
     }
+    $segmentAngleMap = StarPlot_SegmentAngleMap($neededNumberOfAxis);
+    $segmentAngleMapICW = StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMap);
+    $segmentAngleMapNCW = StarPlot_TransformAngleMap_ICW_NCW($segmentAngleMapICW);
+    $jobKey = md5(implode('_',array_keys($segmentAngleMapNCW)));
+    $_SESSION[$jobKey] = array();
+    $_SESSION[$jobKey]['SEG_ANG_MAP_ICW'] = $segmentAngleMapICW;
+    $_SESSION[$jobKey]['SEG_ANG_MAP_NCW'] = $segmentAngleMapNCW;
+    $_SESSION['JOB_KEY'] = $jobKey;
+    echo 'Dimensionstest: '."\n";
+    foreach(range(-1,$neededNumberOfAxisMax+1) as $i) {
+        echo '<a href="/module/StarPlot_CircleGeometry.php?NAXIS='.$i.'" title="Test Request with '.$i.' dimensions.">'.$i.'</a> '; 
+    }
+    echo '<span style="float:right;">Format JPG: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="PlainStarPlot" title="Plot in Format=JPG">JPEG.'.$jobKey.'</a></span>'."\n";
+    echo '<br /><span style="float:right;">Format PNG: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="PlainStarPlot" title="Plot in FOrmat=JPG">PNG.'.$jobKey.'</a></span>'."\n";
+    echo '<br /><img src="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.date().'" style="float:right;" title="Format=PNG" />'."\n";
     echo '<pre>';
     echo 'Testing Module: '.$_SERVER['PHP_SELF']."\n";
     echo '  TestInput: NAXIS='.$neededNumberOfAxis."\n";
-    $segmentAngleMap = StarPlot_SegmentAngleMap($neededNumberOfAxis);
     echo '  TestOutput[0]:'."\n";
     echo '$segmentAngleMap='."\n";
     echo '</pre>';
-    echo '<table><tr><th>$i</th><th>$angleStart</th><th>$angleStop</th><th>$angleMid</th></tr>'."\n";
+    echo '<table style="width:30%;"><tr><th>Laufd.Nr.</th><th>Start/[deg]</th><th>Stop/[deg]</th><th>Achse/[deg]</th></tr>'."\n";
     foreach($segmentAngleMap as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
         $displayRow = array($i,$angleStart, $angleStop, $angleMid);
@@ -260,12 +287,11 @@ function test_main_StarPlot_CircleGeometry() {
         echo '</td></tr>';
     }
     echo '</table>'."\n";
-    $segmentAngleMapICW = StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMap);
     echo '<pre>';
     echo '  TestOutput[1]:'."\n";
     echo '$segmentAngleMapICW='."\n";
     echo '</pre>';
-    echo '<table><tr><th>$i</th><th>$angleStart</th><th>$angleStop</th><th>$angleMid</th></tr>'."\n";
+    echo '<table style="width:30%;"><tr><th>Laufd.Nr.</th><th>Start/[deg]</th><th>Stop/[deg]</th><th>Achse/[deg]</th></tr>'."\n";
     foreach($segmentAngleMapICW as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
         $displayRow = array($i,$angleStart, $angleStop, $angleMid);
@@ -274,12 +300,11 @@ function test_main_StarPlot_CircleGeometry() {
         echo '</td></tr>';
     }
     echo '</table>'."\n";
-    $segmentAngleMapNCW = StarPlot_TransformAngleMap_ICW_NCW($segmentAngleMapICW);
     echo '<pre>';
     echo '  TestOutput[2]:'."\n";
     echo '$segmentAngleMapNCW='."\n";
     echo '</pre>';
-    echo '<table><tr><th>$i</th><th>$angleStart</th><th>$angleStop</th><th>$angleMid</th></tr>'."\n";
+    echo '<table style="width:30%;"><tr><th>Laufd.Nr.</th><th>Start/[deg]</th><th>Stop/[deg]</th><th>Achse/[deg]</th></tr>'."\n";
     foreach($segmentAngleMapNCW as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
         $displayRow = array($i,$angleStart, $angleStop, $angleMid);
@@ -288,12 +313,8 @@ function test_main_StarPlot_CircleGeometry() {
         echo '</td></tr>';
     }
     echo '</table>'."\n";
-    $jobKey = md5(implode('_',array_keys($segmentAngleMapNCW)));
-    $_SESSION[$jobKey] = array();
-    $_SESSION[$jobKey]['SEG_ANG_MAP_ICW'] = $segmentAngleMapICW;
-    $_SESSION[$jobKey]['SEG_ANG_MAP_NCW'] = $segmentAngleMapNCW;
-    $_SESSION['JOB_KEY'] = $jobKey;
-    echo '<a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'" target="PlainStarPlot" title="Plot This!">'.$jobKey.'</a>'."\n";
+    echo '</body>'."\n";
+    echo '</html>'."\n";
     return True;
 }
 if (basename($_SERVER['PHP_SELF']) == 'StarPlot_CircleGeometry.php') test_main_StarPlot_CircleGeometry();

@@ -1,7 +1,10 @@
 body {
-    font-family : sans-serif, verdana, helvetica, arial;
+    font-family : Tahoma, Helvetica, Arial, sans-serif;
     background-color : white;
     color : black;
+    margin: 0 auto;
+    padding: 0 20px 20px 20px;
+    font-size: small;
 }
 a:link {
     text-decoration : none;
@@ -17,4 +20,37 @@ a:hover {
 a:active {
     text-decoration : underline;
     color : red;
+}
+fieldset {
+    border: none;
+    padding: 0;
+}
+form {
+  padding: 1em;
+}
+table {
+    font-size: 0.9em;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 1em;
+    border-collapse:collapse;
+}
+table th.title {
+    text-align: center;
+}
+th,td {
+    text-align: left;
+}
+td {
+    height: 1.6em;
+    padding: 0 0.5em;
+    border: 1px #555555 dotted;
+}
+th {
+    background-color: #990000;
+    color: #ffffff;
+    font-weight: normal;
+}
+th.sortable {
+    cursor: pointer;
 }
