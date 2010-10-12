@@ -42,7 +42,7 @@ function test_main_StarPlot_AxisMaps() {
     $page .= '<body>';
     echo $page;
     $axisDefaultMap = array(
-                            'AXIS_INDEX' => False,
+                            'AXIS_INDEX' => '',
                             'AXIS_NAME' => 'Dimension',
                             'AXIS_TYPE' => 'LINEAR',
                             'AXIS_MIN' => 0.00,
@@ -54,7 +54,7 @@ function test_main_StarPlot_AxisMaps() {
                             'AXIS_UNIT' => '1'
                             );
     $axisDefaultMapFolded = array(
-                            'AXIS_INDEX' => False,
+                            'AXIS_INDEX' => '',
                             'AXIS_NAME' => 'DimensionFolded',
                             'AXIS_TYPE' => 'FOLDED',
                             'AXIS_MIN' => 0.00,
@@ -99,8 +99,19 @@ function test_main_StarPlot_AxisMaps() {
             }
             $axisMap = array_combine($axisDefaultKeys,$axisValues);
             $numericAxisTypes = array('LINEAR','FOLDED');
-            if(!$axisMap['AXIS_INDEX']) {
+            if($axisMap['AXIS_INDEX'] == '') {
                 $axisMap['AXIS_INDEX'] = $n;
+            }
+            else {
+                $indexCand = strval($axisMap['AXIS_INDEX']);
+                $iCFC = strval(intval($indexCand));
+                $axisMap['AXIS_INDEX'] = intval($iCFC);
+                if ($indexCand !== $iCFC) {
+                    $infoQueue[] = 'NOK \''.$indexCand.'\' index requested, accepted as \''.$iCFC.'\'';
+                }
+                else {
+                    $infoQueue[] = ' OK \''.$indexCand.'\' index requested, accepted as \''.$iCFC.'\'';
+                }
             }
             if (in_array($axisMap['AXIS_TYPE'], $numericAxisTypes)) {
                 $axisMap['AXIS_MIN'] = StarPlot_minFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
@@ -120,24 +131,43 @@ function test_main_StarPlot_AxisMaps() {
             $infoQueue[] = $nAxisRowsReq.' dimensions requested, but only '.$nAxisRows.' accepted. Maximum is '.$neededNumberOfAxisMax;
         }
         $bestEffortReOrderMap = array();
+        $collectIndexCandList = array();
         foreach($someAxisMaps as $x => $data) {
-            $indexCand = intval($data['AXIS_INDEX']);
-            if(!is_int($indexCand) or $indexCand < 0 or $indexCand >= $nAxisRows) {
+            $indexCand = $data['AXIS_INDEX'];
+            $iCFC = strval(intval($indexCand));
+            $collectIndexCandList[] = $iCFC;
+            if(!is_numeric($indexCand) or $iCFC != $indexCand or $indexCand < 0 or $indexCand >= $nAxisRows) {
                 $hasIndexCollision = True;
                 $conflictReason = 'NO_INTEGER';
+                if ($iCFC != $indexCand) {
+                    $conflictReason = 'DC_INTEGER';
+                }
                 if ($indexCand < 0) {
                     $conflictReason = 'LT_ZERO';
                 }
                 elseif ($indexCand >= $nAxisRows) {
                     $conflictReason = 'GT_NROW';
                 }
-                $infoQueue[] = 'Conflicting index positions. Failing IndexCand is '.$indexCand.', reason is '.$conflictReason;
+                $infoQueue[] = 'Conflicting index rules. Failing IndexCand is '.$indexCand.', reason is '.$conflictReason;
             }
             if($indexCand != $x) {
                 $hasIndexOrderMismatch = True;
                 $infoQueue[] = 'Index positions not ordered. Misplaced IndexCand is '.$indexCand.', found at '.$x;
             }
             $bestEffortReOrderMap[$indexCand] = $data;
+        }
+        $collectIndexCandSet = array_unique($collectIndexCandList);
+        if(count($collectIndexCandSet) != count($collectIndexCandList)) {
+            $hasIndexCollision = True;
+            $histo = array_count_values($collectIndexCandList);
+            $blameList = array();
+            foreach($histo as $xx => $nn) {
+                if($nn != 1) {
+                    $blameList[] = $xx;
+                }
+            }
+            sort($blameList);
+            $infoQueue[] = 'Conflicting index positions. Failing IndexCand(s) is/are ['.implode(', ',$blameList).'], reason is '.'NONUNIQUE_INDEX';    
         }
         if(!$hasIndexCollision and $hasIndexOrderMismatch) {
             ksort($bestEffortReOrderMap);
