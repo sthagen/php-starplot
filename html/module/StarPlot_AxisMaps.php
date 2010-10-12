@@ -24,4 +24,73 @@ function StarPlot_minFoldedFromLimitMax($limit, $max) {
     // a ---- b -- c ------- e and bc/ce = 3/8 => 8c - 8b = 3e - 3c => a = (11c - 8b)/3
     return (11.0*$max - 8.0*$limit) / 3.0; 
 }
+function test_main_StarPlot_AxisMaps() {
+    session_start();
+    $neededNumberOfAxisMax = 1; // single axis test mode
+    $title = 'Testing Module: '.$_SERVER['PHP_SELF'];
+    $page = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
+    $page .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">'."\n";
+    $page .= '<head>'."\n";
+    $page .= '<link rel="shortcut icon" href="/starplot-favicon.ico" />'."\n";
+    $page .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'."\n";
+    $page .= '<title>'.$title.'</title>'."\n";
+    $pageCSS = '<link rel="stylesheet" type="text/css" media="screen" href="/css/starplotde_v1_screen.css" />'."\n";
+    $page .= $pageCSS;
+    $page .= '</head>';
+    $page .= '<body>';
+    echo $page;
+    $axisDefaultMap = array(
+                            'AXIS_INDEX' => False,
+                            'AXIS_NAME' => 'Dimension',
+                            'AXIS_TYPE' => 'LINEAR',
+                            'AXIS_MIN' => 0.00,
+                            'AXIS_LIMIT' => 0.80,
+                            'AXIS_MAX' => 1.00,
+                            'AXIS_LIMIT_FOLDED' => False,
+                            'AXIS_MIN_FOLDED' => False,
+                            'AXIS_VALUE' => 'NULL',
+                            'AXIS_UNIT' => '1'
+                            );
+    $axisDefaultKeys = array_keys($axisDefaultMap);
+    $axisDefaultValues = array_values($axisDefaultMap);
+    $axisValues = $axisDefaultValues;
+    if(isset($_GET['AXIS_SPEC'])) {
+        $axisValuesCand = explode(';',htmlentities($_GET['AXIS_SPEC']));
+        if (count($axisValues) == count($axisValuesCand)) {
+            foreach($axisValuesCand as $i => $v) {
+                if ($v != '') {
+                    $axisValues[$i] = $v;
+                }
+            }
+        }
+    }
+    $axisMap = array_combine($axisDefaultKeys,$axisValues);
+    $numericAxisTypes = array('LINEAR','FOLDED');
+    $axisMap['AXIS_INDEX'] = 0;
+    if (in_array($axisMap['AXIS_TYPE'], $numericAxisTypes)) {
+        $axisMap['AXIS_MIN'] = StarPlot_minFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
+    }
+    if ($axisMap['AXIS_TYPE'] == 'FOLDED') {
+        $axisMap['AXIS_LIMIT_FOLDED'] = StarPlot_limitFoldedFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
+        $axisMap['AXIS_MIN_FOLDED'] = StarPlot_minFoldedFromLimitMax($axisMap['AXIS_LIMIT'], $axisMap['AXIS_MAX']);
+    }
+    $axisValues = array_values($axisMap);
+    echo 'AxisSpecTest: '."\n";
+    echo '<form style="display:inline;" method="GET" action="'.$_SERVER['PHP_SELF'].'">'."\n";
+    echo '<input type="text" style="font-sice:small;" size="80" name="AXIS_SPEC" value="'.implode(';',$axisValues).'" />'."\n";
+    echo '<input type="submit" name="Subme" value="parse" />'."\n";
+    echo '</form>'.'<br />'."\n";
+    echo 'Default is: '.implode(';',$axisDefaultValues).' [<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>]<br />'."\n";
+    echo 'Implicit Keys: '.implode(';',$axisDefaultKeys).'<br />'."\n";
+    echo '<pre>';
+    echo 'Testing Module: '.$_SERVER['PHP_SELF']."\n";
+    echo '  TestInput: AXIS_SPEC='.htmlentities($_GET['AXIS_SPEC'])."\n";
+    echo '  TestOutput[0]:'."\n";
+    echo '$segmentAngleMap='."\n";
+    echo '</pre>';
+    echo '</body>'."\n";
+    echo '</html>'."\n";
+    return True;
+}
+if (basename($_SERVER['PHP_SELF']) == 'StarPlot_AxisMaps.php') test_main_StarPlot_AxisMaps();
 ?>

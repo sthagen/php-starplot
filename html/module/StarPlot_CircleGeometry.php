@@ -250,6 +250,22 @@ function test_main_StarPlot_CircleGeometry() {
     $page .= '</head>';
     $page .= '<body>';
     echo $page;
+    $xFormatBitfield = imagetypes();
+    $formatMap = array(IMG_GIF => 'GIF', IMG_JPG => 'JPG', IMG_PNG => 'PNG');
+    echo 'DisplayformatTypes: ';
+    foreach($formatMap as $aFormat => $aFormatName) {
+        if($xFormatBitfield & $aFormat) {
+            if ($aFormatName == 'GIF') {
+                echo '<span style="color:#999999;">';
+                echo ' '.$aFormatName;
+                echo '</span>';
+            }
+            else {
+                echo ' '.$aFormatName;
+            }
+        }
+    }
+    echo '<br />';
     $neededNumberOfAxis = $neededNumberOfAxisMax;
     if(isset($_GET['NAXIS'])) {
         $nAxisCand = intval(htmlentities($_GET['NAXIS']));
