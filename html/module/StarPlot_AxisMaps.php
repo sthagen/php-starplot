@@ -76,7 +76,7 @@ function test_main_StarPlot_AxisMaps() {
     }
     $axisValues = array_values($axisMap);
     echo 'AxisSpecTest: '."\n";
-    echo '<form style="display:inline;" method="GET" action="'.$_SERVER['PHP_SELF'].'">'."\n";
+    echo '<form style="display:inline;" method="get" action="'.$_SERVER['PHP_SELF'].'">'."\n";
     echo '<input type="text" style="font-sice:small;" size="80" name="AXIS_SPEC" value="'.implode(';',$axisValues).'" />'."\n";
     echo '<input type="submit" name="Subme" value="parse" />'."\n";
     echo '</form>'.'<br />'."\n";
