@@ -59,12 +59,29 @@ function test_main_StarPlot_CircleGeometry_Data() {
     StarPlot_SetImgColorStyled($image, $darkgray, 5, $gray, 5);
     $segmentAngleMapICW = $_SESSION[$jobKey]['SEG_ANG_MAP_ICW'];
     $nSectors = count($segmentAngleMapICW);
-    $dimensionMap = $_SESSION[$jobKey]['SEG_ANG_MAP_ICW'];
+    $axisMaps = $_SESSION[$jobKey]['AXIS_MAPS'];
     foreach($segmentAngleMapICW as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
+        $v = $axisMaps[$i]['AXIS_VALUE'];
+        $c = $yellow;
+        if($v == 'NULL') {
+            $c = $gray;
+        }
+        elseif ($v >= $equiPartFactor-0.10) {
+            $c = $yellowgreen;
+            if ($v >= $equiPartFactor) {
+                $c = $lightgreen;
+                if ($v >= $equiPartFactor+0.05) {
+                    $c = $green;
+                }
+            }
+        }
         $w = $radiusInner;
         $h = $radiusInner;
-        $c = $gray;
+        if($v != 'NULL') {
+            $w = $width*$v;
+            $h = $height*$v;
+        }
         imagefilledarc($image, $centerX, $centerY, $w, $h, $angleStart, $angleStop, $c, IMG_ARC_PIE);
         if($nSectors >1) {
             imagefilledarc($image, $centerX, $centerY, $w, $h, $angleStart, $angleStop, $black, IMG_ARC_NOFILL|IMG_ARC_EDGED);
