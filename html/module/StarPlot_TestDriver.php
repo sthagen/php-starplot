@@ -29,6 +29,14 @@ function test_main_StarPlot_TestDriver() {
     require_once($_SERVER['DOCUMENT_ROOT'].'/module/StarPlot_CircleGeometry.php');
     $neededNumberOfAxisMax = 16; 
     $nullStrRepr = 'NULL';
+    $randomeValue0 = floatval(rand(0,1000))/1000.0;
+    if(rand(1,10) > 5) {
+        $randomeValue0 = $nullStrRepr;
+    }
+    $randomeValue1 = floatval(rand(0,1000))/1000.0;
+    if(rand(1,9) > 6) {
+        $randomeValue1 = $nullStrRepr;
+    }
     $infoQueue = array();
     $title = 'Using: '.$_SERVER['PHP_SELF'];
     $page = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
@@ -76,9 +84,11 @@ function test_main_StarPlot_TestDriver() {
     if(!isset($_POST['AXIS_SPEC_ROWS'])) {
         $someAxisMaps[0] = $axisDefaultMap;
         $someAxisMaps[0]['AXIS_INDEX'] = 0;
+        $someAxisMaps[0]['AXIS_VALUE'] = $randomeValue0;
         $someAxisMaps[1] = $axisDefaultMap;
         $someAxisMaps[1]['AXIS_INDEX'] = 1;
         $someAxisMaps[1]['AXIS_NAME'] = 'Dimension2';
+        $someAxisMaps[1]['AXIS_VALUE'] = $randomeValue1;
         $someAxisMaps[2] = $axisDefaultMapFolded;
         $someAxisMaps[2]['AXIS_INDEX'] = 2;
         //DEBUG echo '<pre>DefaultUsed:'."\n".print_r($someAxisMaps,True).'</pre>';
@@ -204,7 +214,7 @@ function test_main_StarPlot_TestDriver() {
     echo '<div><form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
     echo '<textarea style="font-sice:small;" cols="70" rows="16" name="AXIS_SPEC_ROWS">'.$normalizedInputDataString.'</textarea>'."\n";
     echo '<br /><input type="submit" name="Subme" value="Parse and Plot" />'."\n";
-    echo ' or [<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>] to some default to get started.'."\n";
+    echo ' or [<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>] to some (randomized) default to get started.'."\n";
     echo '</form>'.'</div>'."\n";
     //echo 'Implicit Keys: '.implode(';',$axisDefaultKeys).'<br />'."\n";
     echo '<pre>';

@@ -63,6 +63,7 @@ function test_main_StarPlot_CircleGeometry_Data() {
     foreach($segmentAngleMapICW as $i => $data) {
         list($angleStart, $angleStop, $angleMid) = $data;
         $v = $axisMaps[$i]['AXIS_VALUE'];
+        error_log('$i,$v='.$i.','.$v,0);
         $c = $yellow;
         if($v == 'NULL') {
             $c = $gray;
