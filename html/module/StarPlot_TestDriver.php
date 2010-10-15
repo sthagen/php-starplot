@@ -177,6 +177,16 @@ function test_main_StarPlot_TestDriver() {
             }
         }
     }
+    $neededNumberOfAxis = count($someAxisMaps);
+    $segmentAngleMapNCW = StarPlot_SegmentAngleMap($neededNumberOfAxis);
+    $segmentAngleMapICW = StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMap);
+    $jobKey = md5(implode('_',array_keys($segmentAngleMapNCW)).'xxx');
+    $_SESSION[$jobKey] = array();
+    $_SESSION[$jobKey]['SEG_ANG_MAP_ICW'] = $segmentAngleMapICW;
+    $_SESSION[$jobKey]['SEG_ANG_MAP_NCW'] = $segmentAngleMapNCW;
+    $_SESSION['JOB_KEY'] = $jobKey;
+    $_SESSION[$jobKey]['AXIS_MAPS'] = $someAxisMaps;
+    
     $normalizedInputDataRows = array();
     foreach($someAxisMaps as $x => $data) {
         $axisValues = array_values($data);
@@ -185,6 +195,9 @@ function test_main_StarPlot_TestDriver() {
     //DEBUG echo '<pre>ReAssembledRows:'."\n".print_r($normalizedInputDataRows,True).'</pre>';
     $normalizedInputDataString = implode("\n",$normalizedInputDataRows);
     //DEBUG echo '<pre>ReAssembledNormalizedInput:'."\n".print_r($normalizedInputDataString,True).'</pre>';
+    echo '<span style="float:right;">Format JPG: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="DataStarPlot" title="Plot in Format=JPG">JPEG.'.$jobKey.'</a></span>'."\n";
+    echo '<br /><span style="float:right;">Format PNG: <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="DataStarPlot" title="Plot in FOrmat=JPG">PNG.'.$jobKey.'</a></span>'."\n";
+    echo '<br /><img src="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.time().'" style="float:right;" alt="Format=PNG" />'."\n";
     echo 'AxisSpecTest: '."\n";
     echo '<form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
     echo '<textarea style="font-sice:small;" cols="80" rows="16" name="AXIS_SPEC_ROWS">'.$normalizedInputDataString.'</textarea>'."\n";
