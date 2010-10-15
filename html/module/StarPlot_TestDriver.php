@@ -200,7 +200,7 @@ function test_main_StarPlot_TestDriver() {
     echo '<br /><img src="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.time().'" style="float:right;" alt="Format=PNG" />'."\n";
     echo 'AxisSpecTest: '."\n";
     echo '<form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
-    echo '<textarea style="font-sice:small;" cols="80" rows="16" name="AXIS_SPEC_ROWS">'.$normalizedInputDataString.'</textarea>'."\n";
+    echo '<textarea style="font-sice:small;" cols="50" rows="16" name="AXIS_SPEC_ROWS">'.$normalizedInputDataString.'</textarea>'."\n";
     echo '<input type="submit" name="Subme" value="parse" />'."\n";
     echo '</form>'.'<br />'."\n";
     echo '[<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>] to some default to get started.<br />'."\n";
