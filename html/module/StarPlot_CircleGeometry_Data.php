@@ -117,7 +117,7 @@ function test_main_StarPlot_CircleGeometry_Data() {
                                                                 $centerX,
                                                                 $centerY
                                                                 );
-        $axisName = strval($i);
+        $axisName = $axisMaps[$i]['AXIS_NAME'];;
         list($dx,$dy) = StarPlot_axisNameCircleAdjust($angle, $fontSizePts,
                                                       $textAngle, $fontName,
                                                       $axisName, $axisNameSpaceSep);
