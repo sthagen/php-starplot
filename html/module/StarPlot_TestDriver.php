@@ -26,6 +26,7 @@ function StarPlot_minFoldedFromLimitMax($limit, $max) {
 }
 function test_main_StarPlot_TestDriver() {
     session_start();
+    require_once($_SERVER['DOCUMENT_ROOT'].'/module/StarPlot_CircleGeometry.php');
     $neededNumberOfAxisMax = 16; 
     $nullStrRepr = 'NULL';
     $infoQueue = array();
@@ -179,7 +180,7 @@ function test_main_StarPlot_TestDriver() {
     }
     $neededNumberOfAxis = count($someAxisMaps);
     $segmentAngleMapNCW = StarPlot_SegmentAngleMap($neededNumberOfAxis);
-    $segmentAngleMapICW = StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMap);
+    $segmentAngleMapICW = StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMapNCW);
     $jobKey = md5(implode('_',array_keys($segmentAngleMapNCW)).'xxx');
     $_SESSION[$jobKey] = array();
     $_SESSION[$jobKey]['SEG_ANG_MAP_ICW'] = $segmentAngleMapICW;
@@ -195,21 +196,21 @@ function test_main_StarPlot_TestDriver() {
     //DEBUG echo '<pre>ReAssembledRows:'."\n".print_r($normalizedInputDataRows,True).'</pre>';
     $normalizedInputDataString = implode("\n",$normalizedInputDataRows);
     //DEBUG echo '<pre>ReAssembledNormalizedInput:'."\n".print_r($normalizedInputDataString,True).'</pre>';
-    echo '<span style="float:right;">Format JPG: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="DataStarPlot" title="Plot in Format=JPG">JPEG.'.$jobKey.'</a></span>'."\n";
-    echo '<br /><span style="float:right;">Format PNG: <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="DataStarPlot" title="Plot in FOrmat=JPG">PNG.'.$jobKey.'</a></span>'."\n";
-    echo '<br /><img src="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.time().'" style="float:right;" alt="Format=PNG" />'."\n";
-    echo 'AxisSpecTest: '."\n";
-    echo '<form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
-    echo '<textarea style="font-sice:small;" cols="50" rows="16" name="AXIS_SPEC_ROWS">'.$normalizedInputDataString.'</textarea>'."\n";
-    echo '<input type="submit" name="Subme" value="parse" />'."\n";
-    echo '</form>'.'<br />'."\n";
-    echo '[<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>] to some default to get started.<br />'."\n";
+    echo '<div style="clear:none;"><img src="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.time().'" style="float:right;width:45%;" alt="Format=PNG" />'."\n";
+    echo '<br /><span style="float:right;">Format: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="DataStarPlot" title="Plot in Format=JPG">JPG</a>'."\n";
+    echo ' | <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="DataStarPlot" title="Plot in FOrmat=JPG">PNG</a></span>'."\n";
+    echo '</div>';
+    echo '<h2>AxisSpecTest:</h2>'."\n";
+    echo '<div><form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
+    echo '<textarea style="font-sice:small;" cols="70" rows="16" name="AXIS_SPEC_ROWS">'.$normalizedInputDataString.'</textarea>'."\n";
+    echo '<br /><input type="submit" name="Subme" value="Parse and Plot" />'."\n";
+    echo ' or [<a href="'.$_SERVER['PHP_SELF'].'">RESET</a>] to some default to get started.'."\n";
+    echo '</form>'.'</div>'."\n";
     //echo 'Implicit Keys: '.implode(';',$axisDefaultKeys).'<br />'."\n";
     echo '<pre>';
     echo 'Testing Module: '.$_SERVER['PHP_SELF']."\n";
     $infoQueue[] = 'TestInput: AXIS_SPEC_ROWS=<pre>'."\n".$axisValuesRowsReqString.'</pre>'."\n";
-    echo '  TestOutput[0]:'."\n";
-    echo '$someAxisMaps='."\n";
+    echo '  TestOutput[0]: '.'$someAxisMaps=';
     //DEBUG echo print_r($someAxisMaps,True);
     echo '</pre>';
     echo '<table style="width:75%;"><tr><th>Laufd.Nr.</th><th>Name</th><th>Type</th><th>Min</th><th>Limit</th><th>Max</th><th>LimitFolded</th><th>MinFolded</th><th>Value</th><th>Unit</th></tr>'."\n";
