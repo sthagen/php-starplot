@@ -87,7 +87,7 @@ function test_main_StarPlot_TestDriver() {
         $someAxisMaps[0]['AXIS_VALUE'] = $randomeValue0;
         $someAxisMaps[1] = $axisDefaultMap;
         $someAxisMaps[1]['AXIS_INDEX'] = 1;
-        $someAxisMaps[1]['AXIS_NAME'] = 'Dimension2';
+        $someAxisMaps[1]['AXIS_NAME'] = 'Dim2';
         $someAxisMaps[1]['AXIS_VALUE'] = $randomeValue1;
         $someAxisMaps[2] = $axisDefaultMapFolded;
         $someAxisMaps[2]['AXIS_INDEX'] = 2;
