@@ -52,7 +52,7 @@ function test_main_StarPlot_TestDriver() {
     echo $page;
     $axisDefaultMap = array(
                             'AXIS_INDEX' => '',
-                            'AXIS_NAME' => 'Dimension',
+                            'AXIS_NAME' => 'Dim',
                             'AXIS_TYPE' => 'LINEAR',
                             'AXIS_MIN' => 0.00,
                             'AXIS_LIMIT' => 0.80,
@@ -64,7 +64,7 @@ function test_main_StarPlot_TestDriver() {
                             );
     $axisDefaultMapFolded = array(
                             'AXIS_INDEX' => '',
-                            'AXIS_NAME' => 'DimensionFolded',
+                            'AXIS_NAME' => 'DimFold',
                             'AXIS_TYPE' => 'FOLDED',
                             'AXIS_MIN' => 0.00,
                             'AXIS_LIMIT' => 0.80,
