@@ -24,12 +24,12 @@ function StarPlot_minFoldedFromLimitMax($limit, $max) {
     // a ---- b -- c ------- e and bc/ce = 3/8 => 8c - 8b = 3e - 3c => a = (11c - 8b)/3
     return (11.0*$max - 8.0*$limit) / 3.0; 
 }
-function test_main_StarPlot_AxisMaps() {
+function test_main_StarPlot_TestDriver() {
     session_start();
     $neededNumberOfAxisMax = 16; 
     $nullStrRepr = 'NULL';
     $infoQueue = array();
-    $title = 'Testing Module: '.$_SERVER['PHP_SELF'];
+    $title = 'Using: '.$_SERVER['PHP_SELF'];
     $page = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
     $page .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">'."\n";
     $page .= '<head>'."\n";
@@ -217,5 +217,5 @@ function test_main_StarPlot_AxisMaps() {
     echo '</html>'."\n";
     return True;
 }
-if (basename($_SERVER['PHP_SELF']) == 'StarPlot_AxisMaps.php') test_main_StarPlot_AxisMaps();
+if (basename($_SERVER['PHP_SELF']) == 'StarPlot_TestDriver.php') test_main_StarPlot_TestDriver();
 ?>
