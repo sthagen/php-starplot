@@ -52,6 +52,7 @@ function test_main_StarPlot_CircleGeometry_Data() {
 
     // Add the bottom layer.
     $equiPartFactor = 1.0/M_SQRT2;
+    $minPartFactor = 1.0/M_SQRT2/1.6; // FIXME wrong HACK but sow way to go
     $radiusOuter = $height;
     $radiusInner = $radiusOuter*$equiPartFactor;
     $areaInner = $radiusInner*$radiusInner*M_PI;
@@ -148,14 +149,14 @@ function test_main_StarPlot_CircleGeometry_Data() {
                                                       $axisNameDisplay, $axisNameSpaceSep);
         $pos_xft = $pos_xf + $dx;
         $pos_yft = $pos_yf + $dy;
-        $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$axisNameDisplay.'_i='.$i;
-        error_log($reportMe,0);
+        // DEBUG $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$axisNameDisplay.'_i='.$i;
+        // DEBUG error_log($reportMe,0);
         imagettftext($image, $fontSizePts, $textAngle, $pos_xft, $pos_yft,
                      $black, $fontName, $axisNameDisplay
                      );
         imageline($image, $centerX, $centerY, $pos_xf, $pos_yf, IMG_COLOR_STYLED);
 
-        // FIXME first hack to draw value lables
+        // FIXME first hack to draw value labels
         $valueName = $axisMaps[$i]['AXIS_MAX']; // FIXME code needs audit
         list($pos_xf,$pos_yf) = StarPlot_XYPointFromRadiusAngle($radius-$fontSizePtsV*2,
                                                                 $angle,
@@ -167,8 +168,8 @@ function test_main_StarPlot_CircleGeometry_Data() {
                                                       $valueName, $axisNameSpaceSep);
         $pos_xft = $pos_xf + $dx;
         $pos_yft = $pos_yf + $dy;    
-        $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$valueName.'_i='.$i;
-        error_log($reportMe,0);
+        // DEBUG $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$valueName.'_i='.$i;
+        // DEBUG error_log($reportMe,0);
         imagettftext($image, $fontSizePtsV, $textAngle, $pos_xft, $pos_yft,
                      $black, $fontName, $valueName
                      );
@@ -187,11 +188,33 @@ function test_main_StarPlot_CircleGeometry_Data() {
                                                       $valueName, $axisNameSpaceSep);
         $pos_xft = $pos_xf + $dx;
         $pos_yft = $pos_yf + $dy;    
-         $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$valueName.'_i='.$i;
-        error_log($reportMe,0);
+        // DEBUG $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$valueName.'_i='.$i;
+        // DEBUG error_log($reportMe,0);
+        imagettftext($image, $fontSizePtsV, $textAngle, $pos_xft, $pos_yft,
+                     $black, $fontName, $valueName
+                     );
+        
+        // optionally draw minimum values
+        $valueName = round($axisMaps[$i]['AXIS_MIN'],2); 
+        $aType = $axisMaps[$i]['AXIS_TYPE']; // FIXME possibly redundant
+        if($aType == 'FOLDED') {
+            $valueName .= '/'.round($axisMaps[$i]['AXIS_MIN_FOLDED'],2); // FIXME code needs audit
+        }
+        list($pos_xf,$pos_yf) = StarPlot_XYPointFromRadiusAngle($radius*$minPartFactor-$fontSizePtsV*2,
+                                                                $angle,
+                                                                $centerX,
+                                                                $centerY );
+        list($dx,$dy) = StarPlot_axisNameCircleAdjust($angle, $fontSizePtsV,
+                                                      $textAngle, $fontName,
+                                                      $valueName, $axisNameSpaceSep);
+        $pos_xft = $pos_xf + $dx;
+        $pos_yft = $pos_yf + $dy;    
+        // DEBUG $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$valueName.'_i='.$i;
+        // DEBUG error_log($reportMe,0);
         imagettftext($image, $fontSizePtsV, $textAngle, $pos_xft, $pos_yft,
                      $black, $fontName, $valueName
                      );    
+
     }
     
     $imageOut = StarPlot_antiAlias($image);
