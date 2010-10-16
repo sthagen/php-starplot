@@ -24,6 +24,11 @@ function StarPlot_minFoldedFromLimitMax($limit, $max) {
     // a ---- b -- c ------- e and bc/ce = 3/8 => 8c - 8b = 3e - 3c => a = (11c - 8b)/3
     return (11.0*$max - 8.0*$limit) / 3.0; 
 }
+function StarPlot_valueFoldedFromLimitMax($value, $max) {
+    // Testdata: (-6, -1, 2, 5, 10) or (0, 5, 8, 11, 16) // FIXME COPY
+    // yield 2 * 2 - (-1) = 5 or 2 * 8 - 5 = 11 // FIXME COPY
+    return 2.0 * $max - $value; // explicit $max - ( $value - $max )
+}
 function test_main_StarPlot_AxisMaps() {
     session_start();
     $neededNumberOfAxisMax = 16; 

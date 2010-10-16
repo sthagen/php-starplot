@@ -5,6 +5,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/module/StarPlot_DMZ.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/module/StarPlot_ImageColors.php');
 function test_main_StarPlot_CircleGeometry_Data() {
     session_start();
+    $nullStrRepr = 'NULL';
     $knownFormats = array('PNG','JPG');
     $jobKey = False; // 8cdbd7800d060827f77d4dd2c245c6fd
     if(isset($_GET['JOB_KEY'])) {
@@ -65,15 +66,35 @@ function test_main_StarPlot_CircleGeometry_Data() {
         $v = $axisMaps[$i]['AXIS_VALUE'];
         error_log('$i,$v='.$i.','.$v,0);
         $c = $yellow;
-        if($v == 'NULL') {
+        if($v == $nullStrRepr) {
             $c = $gray;
         }
-        elseif ($v >= $equiPartFactor-0.10) {
-            $c = $yellowgreen;
-            if ($v >= $equiPartFactor) {
-                $c = $lightgreen;
-                if ($v >= $equiPartFactor+0.05) {
-                    $c = $green;
+        else {
+            $aType = $axisMaps[$i]['AXIS_TYPE'];
+            if($aType == 'LINEAR') {
+                $vMin = $axisMaps[$i]['AXIS_MIN'];
+                $vMax = $axisMaps[$i]['AXIS_MAX'];
+                $v = min($v,$vMax); // FIXME code needs audit
+                $v = max($v,$vMin); // FIXME code needs audit
+            }
+            elseif($aType == 'FOLDED') {
+                $vMin = $axisMaps[$i]['AXIS_MIN'];
+                $vMinFolded = $axisMaps[$i]['AXIS_MIN_FOLDED'];
+                $vMax = $axisMaps[$i]['AXIS_MAX'];
+                //$v = min($v,$vMax); // FIXME code needs audit
+                $v = min($v,$vMinFolded); // FIXME code needs audit
+                $v = max($v,$vMin); // FIXME code needs audit
+                if($v > $vMax) {
+                    $v = StarPlot_valueFoldedFromLimitMax($v, $vMax);
+                }
+            }
+            if ($v >= $equiPartFactor-0.10) {
+                $c = $yellowgreen;
+                if ($v >= $equiPartFactor) {
+                    $c = $lightgreen;
+                    if ($v >= $equiPartFactor+0.05) {
+                        $c = $green;
+                    }
                 }
             }
         }
@@ -108,7 +129,9 @@ function test_main_StarPlot_CircleGeometry_Data() {
     $fontName = $_SERVER['DOCUMENT_ROOT'].'/arial.ttf'; // FIXME FontFile should NOT be in web space!
     $textAngle = 0;
     $fontSizePts = 10*2;
-    $axisNameSpaceSep = True;
+    $fontSizePtsV = 8*2;
+    $axisNameSpaceSep = True; // FIXME this might be optional parameter
+    
     foreach($segmentAngleMapICW as $i => $data) {
         $radius = $width/2;
         $angle = $data[2];
@@ -117,18 +140,58 @@ function test_main_StarPlot_CircleGeometry_Data() {
                                                                 $centerX,
                                                                 $centerY
                                                                 );
-        $axisName = $axisMaps[$i]['AXIS_NAME'];;
+        $axisName = $axisMaps[$i]['AXIS_NAME'];
+        $axisUnit = rtrim($axisMaps[$i]['AXIS_UNIT']);
+        $axisNameDisplay = $axisName.'['.$axisUnit.']';
         list($dx,$dy) = StarPlot_axisNameCircleAdjust($angle, $fontSizePts,
                                                       $textAngle, $fontName,
-                                                      $axisName, $axisNameSpaceSep);
+                                                      $axisNameDisplay, $axisNameSpaceSep);
         $pos_xft = $pos_xf + $dx;
         $pos_yft = $pos_yf + $dy;
-        $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$axisName.'_i='.$i;
+        $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$axisNameDisplay.'_i='.$i;
         error_log($reportMe,0);
         imagettftext($image, $fontSizePts, $textAngle, $pos_xft, $pos_yft,
-                     $black, $fontName, $axisName
+                     $black, $fontName, $axisNameDisplay
                      );
         imageline($image, $centerX, $centerY, $pos_xf, $pos_yf, IMG_COLOR_STYLED);
+
+        // FIXME first hack to draw value lables
+        $valueName = $axisMaps[$i]['AXIS_MAX']; // FIXME code needs audit
+        list($pos_xf,$pos_yf) = StarPlot_XYPointFromRadiusAngle($radius-$fontSizePtsV*2,
+                                                                $angle,
+                                                                $centerX,
+                                                                $centerY
+                                                                );
+        list($dx,$dy) = StarPlot_axisNameCircleAdjust($angle, $fontSizePtsV,
+                                                      $textAngle, $fontName,
+                                                      $valueName, $axisNameSpaceSep);
+        $pos_xft = $pos_xf + $dx;
+        $pos_yft = $pos_yf + $dy;    
+        $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$valueName.'_i='.$i;
+        error_log($reportMe,0);
+        imagettftext($image, $fontSizePtsV, $textAngle, $pos_xft, $pos_yft,
+                     $black, $fontName, $valueName
+                     );
+        // ditto
+        $valueName = $axisMaps[$i]['AXIS_LIMIT']; // FIXME this is from old parallel vectors version
+        $aType = $axisMaps[$i]['AXIS_TYPE'];
+        if($aType == 'FOLDED') {
+            $valueName .= '/'.$axisMaps[$i]['AXIS_LIMIT_FOLDED']; // FIXME code needs audit
+        }
+        list($pos_xf,$pos_yf) = StarPlot_XYPointFromRadiusAngle($radius*$equiPartFactor-$fontSizePtsV*2,
+                                                                $angle,
+                                                                $centerX,
+                                                                $centerY );
+        list($dx,$dy) = StarPlot_axisNameCircleAdjust($angle, $fontSizePtsV,
+                                                      $textAngle, $fontName,
+                                                      $valueName, $axisNameSpaceSep);
+        $pos_xft = $pos_xf + $dx;
+        $pos_yft = $pos_yf + $dy;    
+         $reportMe = 'ang='.$angle.'_X='.$pos_xf.'_Y='.$pos_yf.'_nam='.$valueName.'_i='.$i;
+        error_log($reportMe,0);
+        imagettftext($image, $fontSizePtsV, $textAngle, $pos_xft, $pos_yft,
+                     $black, $fontName, $valueName
+                     );    
     }
     
     $imageOut = StarPlot_antiAlias($image);
