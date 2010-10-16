@@ -82,7 +82,7 @@ function test_main_StarPlot_TestDriver() {
     $hasIndexCollision = False;
     $hasIndexOrderMismatch = False;
     if(!isset($_POST['AXIS_SPEC_ROWS'])) {
-        $someAxisMaps[0] = $axisDefaultMap;
+        /*$someAxisMaps[0] = $axisDefaultMap;
         $someAxisMaps[0]['AXIS_INDEX'] = 0;
         $someAxisMaps[0]['AXIS_VALUE'] = $randomeValue0;
         $someAxisMaps[1] = $axisDefaultMap;
@@ -90,11 +90,23 @@ function test_main_StarPlot_TestDriver() {
         $someAxisMaps[1]['AXIS_NAME'] = 'Dim2';
         $someAxisMaps[1]['AXIS_VALUE'] = $randomeValue1;
         $someAxisMaps[2] = $axisDefaultMapFolded;
-        $someAxisMaps[2]['AXIS_INDEX'] = 2;
+        $someAxisMaps[2]['AXIS_INDEX'] = 2;*/
         //DEBUG echo '<pre>DefaultUsed:'."\n".print_r($someAxisMaps,True).'</pre>';
+        $_POST['AXIS_SPEC_ROWS'] = '0;D1F;FOLDED;;0.8;1;;;-0.1;dB
+1;D2F;FOLDED;;0.8;1;;;NULL;1
+2;D3F;FOLDED;;0.8;1;;;0.8;V
+3;D4F;FOLDED;;0.8;1;;;1.1;dB
+4;D5F;FOLDED;;0.8;1;;;1.2;dB
+5;D6F;FOLDED;;0.8;1;;;1.5;dB
+6;D7F;FOLDED;;0.8;1;;;1.6;dB
+7;D8L;LINEAR;;0.8;1;;;0.75;#
+8;D9F;FOLDED;;0.8;1;;;0.8;dB
+9;D10L;LINEAR;;0.8;1;;;0.7;ms
+10;D11L;LINEAR;;0.8;1;;;0.8;kbit/s
+11;D12L;LINEAR;;0.8;1;;;NULL;s';
         $infoQueue[] = 'Default used, since no input given.';
     }
-    else {
+    //else {
         $axisValuesRowsReqString = htmlentities($_POST['AXIS_SPEC_ROWS']);
         $axisValuesRowsReq = explode("\n",$axisValuesRowsReqString);
         $nAxisRowsReq = count($axisValuesRowsReq);
@@ -187,7 +199,7 @@ function test_main_StarPlot_TestDriver() {
                 $someAxisMaps[] = $data;
             }
         }
-    }
+    //}
     $neededNumberOfAxis = count($someAxisMaps);
     $segmentAngleMapNCW = StarPlot_SegmentAngleMap($neededNumberOfAxis);
     $segmentAngleMapICW = StarPlot_TransformAngleMap_NCW_ICW($segmentAngleMapNCW);
