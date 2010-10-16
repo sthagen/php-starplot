@@ -219,7 +219,7 @@ function test_main_StarPlot_TestDriver() {
     $normalizedInputDataString = implode("\n",$normalizedInputDataRows);
     //DEBUG echo '<pre>ReAssembledNormalizedInput:'."\n".print_r($normalizedInputDataString,True).'</pre>';
     echo '<div style="clear:none;"><img src="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.time().'" style="float:right;width:45%;" alt="Format=PNG" />'."\n";
-    echo '<br /><span style="float:right;">Format: <a href="/module/StarPlot_CircleGeometry_Plain.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="DataStarPlot" title="Plot in Format=JPG">JPG</a>'."\n";
+    echo '<br /><span style="float:right;">Format: <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="DataStarPlot" title="Plot in Format=JPG">JPG</a>'."\n";
     echo ' | <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="DataStarPlot" title="Plot in FOrmat=JPG">PNG</a></span>'."\n";
     echo '</div>';
     echo '<h2>AxisSpecTest:</h2>'."\n";
