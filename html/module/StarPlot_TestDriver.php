@@ -218,9 +218,15 @@ function test_main_StarPlot_TestDriver() {
     //DEBUG echo '<pre>ReAssembledRows:'."\n".print_r($normalizedInputDataRows,True).'</pre>';
     $normalizedInputDataString = implode("\n",$normalizedInputDataRows);
     //DEBUG echo '<pre>ReAssembledNormalizedInput:'."\n".print_r($normalizedInputDataString,True).'</pre>';
-    echo '<div style="clear:none;"><img src="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.time().'" style="float:right;width:45%;" alt="Format=PNG" />'."\n";
-    echo '<br /><span style="float:right;">Format: <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" target="DataStarPlot" title="Plot in Format=JPG">JPG</a>'."\n";
-    echo ' | <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="DataStarPlot" title="Plot in FOrmat=JPG">PNG</a></span>'."\n";
+    echo '<a href=<div style="clear:none;"><a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" target="StarPlotPNG" ';
+    echo 'title="Select image to access maximal resolution bitmap in format PNG.">';
+    echo '<img src="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG&amp;NOW='.time().'" ';
+    echo 'style="float:right;width:25%;border:0px;" alt="This is a 25% Preview. Select image to access maximal resolution bitmap in format PNG." /></a>'."\n";
+    echo '<br /><span style="float:right;">Format: <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" ';
+    echo 'target="DataStarPlot" title="Plot in Format=JPG">JPG</a>'."\n";
+    echo ' | <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" ';
+    echo 'target="DataStarPlot" title="Plot in Format=PNG">PNG</a></span>'."\n";
+    echo ' Preview:';
     echo '</div>';
     echo '<h2>AxisSpecTest:</h2>'."\n";
     echo '<div><form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
