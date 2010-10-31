@@ -226,7 +226,7 @@ function test_main_StarPlot_TestDriver() {
     echo 'target="DataStarPlot" title="Plot in Format=JPG">JPG</a>'."\n";
     echo ' | <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" ';
     echo 'target="DataStarPlot" title="Plot in Format=PNG">PNG</a>'."\n";
-    echo ' 25%-Preview below:';
+    echo ', a 25%-Preview:';
     echo '</span>';
     echo '</div>';
     echo '<h2>AxisSpecTest:</h2>'."\n";
