@@ -225,8 +225,9 @@ function test_main_StarPlot_TestDriver() {
     echo '<br /><span style="float:right;">Format: <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=JPG" ';
     echo 'target="DataStarPlot" title="Plot in Format=JPG">JPG</a>'."\n";
     echo ' | <a href="/module/StarPlot_CircleGeometry_Data.php?JOB_KEY='.$jobKey.'&amp;FORMAT=PNG" ';
-    echo 'target="DataStarPlot" title="Plot in Format=PNG">PNG</a></span>'."\n";
-    echo ' Preview:';
+    echo 'target="DataStarPlot" title="Plot in Format=PNG">PNG</a>'."\n";
+    echo ' 25%-Preview below:';
+    echo '</span>';
     echo '</div>';
     echo '<h2>AxisSpecTest:</h2>'."\n";
     echo '<div><form style="display:inline;" method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n";
