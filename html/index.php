@@ -36,7 +36,7 @@ $references .= '<dt><a name="ChambersEtAl_1983"><strong>[ChambersEtAl_1983]</str
 $references .= '<dd><strong>Chambers, John &amp; Cleveland, William &amp; Kleiner, Beat and Tukey, Paul</strong>. (1983). Graphical Methods for Data Analysis, Wadsworth.</dd>';
 
 $references .= '<dt><a name="ITUTRecP505_2005"><strong>[ITUTRecP505_2005]</strong></a></dt>';
-$references .= '<dd><strong>Adler, Klemens P. F., Gierlich, Hans, Pomy, Joachim</strong>(Ed.). ITU-T Recommendation P.505 (2005). One-view visualization of speech quality measurement results. <em><a href="http://www.itu.int/itu-t/studygroups/com12/index.asp" target="_blank">ITU-T SG 12</a></em>.</dd>';
+$references .= '<dd><strong>Adler, Klemens P. F. &amp; Gierlich, Hans &amp; Pomy, Joachim</strong> (Ed.). ITU-T Recommendation P.505 (2005). One-view visualization of speech quality measurement results. <em><a href="http://www.itu.int/itu-t/studygroups/com12/index.asp" target="_blank">ITU-T SG 12</a></em>.</dd>';
 
 $references .= '<dt><a name="vonMayr_1877"><strong>[vonMayr_1877]</strong></a></dt>';
 $references .= '<dd><strong>Mayr, Georg von</strong>. (1877). Die Gesetzm&auml;ssigkeit im Gesellschaftsleben. Oldenbourg. 78</dd>';
@@ -60,7 +60,7 @@ $page .= $pageCSS;
 $page .= '</head>';
 $page .= '<body>';
 $page .= '<h1>'.$h1.'</h1>'."\n";
-$page .= '<p>'.$pIntro.'<br />'."\n";
+$page .= '<p>'.$pIntro.' '."\n";
 $page .= ''.$pMain.'</p>'."\n";
 $page .= '<h2>'.$h2.'</h2>'."\n";
 $page .= '<a href="/module/StarPlot_TestDriver.php">';
