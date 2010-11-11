@@ -48,7 +48,7 @@ $references .= '<dt><a name="SiegelEtAl_1971"><strong>[SiegelEtAl_1971]</strong>
 $references .= '<dd><strong>Siegel, J. H. &amp; Goldwyn, R. M. &amp; Friedman, H. P.</strong>. (1971). Pattern and Process of the Evolution of Human Septic Shock. <em>Surgery</em>. 70. 232-245.</dd>';
 
 $references .= '</dl>';
-$h2 = 'Example inspired by ITU-T-Rec.P.505';
+$h2 = 'Example inspired by ITU-T Rec. P.505';
 $page = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
 $page .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">'."\n";
 $page .= '<head>'."\n";
@@ -60,8 +60,8 @@ $page .= $pageCSS;
 $page .= '</head>';
 $page .= '<body>';
 $page .= '<h1>'.$h1.'</h1>'."\n";
-$page .= '<p>'.$pIntro.'</p>'."\n";
-$page .= '<p>'.$pMain.'</p>'."\n";
+$page .= '<p>'.$pIntro.'<br />'."\n";
+$page .= ''.$pMain.'</p>'."\n";
 $page .= '<h2>'.$h2.'</h2>'."\n";
 $page .= '<a href="/module/StarPlot_TestDriver.php">';
 $page .= '<img style="border:0;" src="/image/ITU-T-Rec.P.505.png" alt="A fictitious speech quality plot" /></a>';
