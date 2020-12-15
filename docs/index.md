@@ -2,7 +2,8 @@
 This implementation is old. But still, ...
 
 ## Screenshot of the Workplace
-TODO
+The main part of the so workplace for constructing the quality pie plots looks like below:
+![Example Workplace](https://github.com/sthagen/php-starplot/blob/default/docs/workplace_sample.png?raw=true)
 
 ## Example Plots
 TODO
